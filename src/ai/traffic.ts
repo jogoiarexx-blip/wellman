@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import RAPIER from '@dimforge/rapier3d-compat';
 import type { ActiveCar } from '../vehicles/car';
 
 export interface TrafficAgent {
@@ -62,8 +61,9 @@ export function updateTraffic(agent: TrafficAgent, dt: number) {
     engine = -car.preset.reverse * 0.3;
   }
 
-  // Apply controls
+  // Apply controls, com direção suavizada pelo delta de tempo.
   const v = car.vehicle;
+  steer = THREE.MathUtils.damp(v.wheelSteering(0) ?? 0, steer, 7, dt);
   v.setWheelSteering(0, steer);
   v.setWheelSteering(1, steer);
   v.setWheelEngineForce(0, engine);

@@ -1,0 +1,29 @@
+WELLMAN - PRONTO PARA COMPILAR E PUBLICAR NO GITHUB PAGES
+=========================================================
+Este ZIP contém o projeto COMPLETO corrigido (não apenas um patch).
+Ele foi gerado a partir do seu arquivo wellman-main.zip.
+
+PARA PUBLICAR:
+1. Extraia o ZIP.
+2. Copie todos os arquivos e pastas PARA A RAIZ do repositório GitHub,
+   incluindo a pasta oculta .github e seu arquivo workflows/deploy.yml.
+3. Faça commit/push para branch main.
+4. GitHub > wellman > Settings > Pages > Build and deployment:
+   Source = GitHub Actions (NAO use Deploy from a branch).
+5. GitHub > Actions > Deploy Wellman to GitHub Pages > Run workflow
+   (se o commit não acionou automaticamente).
+6. Após os jobs build/deploy ficarem verdes, abra:
+   https://luispauloalves500.github.io/wellman/
+
+TESTE LOCAL:
+  npm install
+  npm run build
+  npm run preview
+
+NOTAS:
+- O workflow instala dependencias automaticamente no GitHub.
+- Seu ZIP original não continha os sistemas recentes de inimigos e tiros;
+  substituir a branch pela versão deste ZIP poderá remover esses sistemas.
+- Este ambiente não tem acesso ao registro npm para executar o build completo.
+  O build final será realizado pelo GitHub Actions após o commit.
+- GitHub Pages requer WebGL habilitado no navegador para renderizar o jogo 3D.

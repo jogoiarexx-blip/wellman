@@ -62,6 +62,8 @@ export function updatePolice(
     steer = Math.sin(performance.now() * 0.001) * 0.15;
   }
 
+  // Interpolação dependente do tempo: elimina a variável não usada e suaviza a direção.
+  steer = THREE.MathUtils.damp(v.wheelSteering(0) ?? 0, steer, 7, dt);
   v.setWheelSteering(0, steer);
   v.setWheelSteering(1, steer);
   v.setWheelEngineForce(0, engine);

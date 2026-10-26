@@ -84,7 +84,18 @@ policeAgents.push(createPoliceAgent(policeCar, 0.9));
 setupInput((action) => {
   if (action === 'exit' && driving) exitCar();
   if (action === 'enter' && !driving) enterNearestCar();
+  if (action === 'switch' && driving) switchCar();
 });
+
+// Ao trocar de veículo, não desative as colisões dos demais carros.
+function switchCar() {
+  if (!driving) return;
+  activeIndex = (activeIndex + 1) % cars.length;
+  if (activeIndex !== 0) {
+    hasStolen = true;
+    wantedLevel = Math.min(3, wantedLevel + 1);
+  }
+}
 
 function exitCar() {
   if (!driving) return;
@@ -173,8 +184,8 @@ function step() {
     v.setWheelEngineForce(1, engine);
     v.setWheelSteering(0, steer);
     v.setWheelSteering(1, steer);
-    const brake = (back && !fwd) ? 50 : 0;
-    for (let i = 0; i < 4; i++) v.setWheelBrake(i, brake);
+    // Ré é força de motor negativa; frear simultaneamente impedia a manobra.
+    for (let i = 0; i < 4; i++) v.setWheelBrake(i, 0);
     const rearGrip = hb ? p.rearGripHandbrake : p.grip;
     v.setWheelFrictionSlip(2, rearGrip);
     v.setWheelFrictionSlip(3, rearGrip);
@@ -196,7 +207,12 @@ function step() {
   }
 
   cars.forEach(c => {
-    if (driving && c === cars[activeIndex]) return;
+    if (driving && c === cars[activeIndex]) {
+      // O veículo controlado pelo jogador também precisa atualizar o raycast
+      // das rodas antes do passo da física; sem isto, ele não acelera.
+      c.vehicle.updateVehicle(FIXED_DT, RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);
+      return;
+    }
     const traffic = trafficAgents.find(a => a.car === c);
     if (traffic) updateTraffic(traffic, FIXED_DT);
 
@@ -249,7 +265,7 @@ function animate() {
   const mode = driving ? `Dirigindo: ${cars[activeIndex].preset.name}` : 'A pé';
   const speed = driving ? Math.abs(cars[activeIndex].vehicle.currentVehicleSpeed()) * 3.6 : 0;
   const contacts = driving ? [0,1,2,3].map(i => cars[activeIndex].vehicle.wheelIsInContact(i) ? '●' : '○').join(' ') : '';
-  hud.textContent = `UNDERCOVER WHEELMAN\n${mode}\n` + (driving ? `Velocidade: ${speed.toFixed(0)} km/h\nContato: ${contacts}\n` : '') + `Tráfego IA: ${trafficAgents.length} carros\nPolícia: ${policeAgents.length} | Wanted: ${wantedLevel}\nGamepad: ${gp.connected ? 'conectado' : 'não'}\nFPS: ${Math.round(1/Math.max(dt,0.001))}\n\nE = sair | F = entrar\nGamepad: Y = sair | X = entrar | A = handbrake`;
+  hud.textContent = `UNDERCOVER WHEELMAN\n${mode}\n` + (driving ? `Velocidade: ${speed.toFixed(0)} km/h\nContato: ${contacts}\n` : '') + `Tráfego IA: ${trafficAgents.length} carros\nPolícia: ${policeAgents.length} | Wanted: ${wantedLevel}\nGamepad: ${gp.connected ? 'conectado' : 'não'}\nFPS: ${Math.round(1/Math.max(dt,0.001))}\n\nE = sair | F = entrar | C = trocar carro\nGamepad: Y = sair | X = entrar | A = freio de mão`;
 
   const current = getCurrentMission();
   const done = MISSIONS.filter(m => m.completed).length;

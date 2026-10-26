@@ -45,7 +45,8 @@ export function checkMissions(
     if (m.completed) continue;
 
     if (m.id === 'steal-car') {
-      if (hasStolen) {
+      // A missão só termina após entrar no veículo roubado, não durante a caminhada.
+      if (hasStolen && !onFoot) {
         m.completed = true;
         return m;
       }
