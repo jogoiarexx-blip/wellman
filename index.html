@@ -3,14 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UNDERCOVER WHEELMAN — Física de Pneus</title>
-    <link rel="icon" type="image/svg+xml" href="/wellman/favicon.svg">
+    <meta name="theme-color" content="#101727" />
+    <title>UNDERCOVER WHEELMAN — Cidade 3D</title>
+    <link rel="icon" type="image/svg+xml" href="/wellman/favicon.svg" />
     <style>
-      body { margin: 0; overflow: hidden; background: #000; }
+      * { box-sizing: border-box; }
+      body { margin: 0; overflow: hidden; background: #101727; font-family: system-ui, sans-serif; }
       canvas { display: block; }
+      #loading-screen {
+        position: fixed; inset: 0; display: grid; place-items: center; z-index: 100;
+        background: radial-gradient(circle at 50% 35%, #1c3550, #080e19 75%);
+        color: white; text-align: center; padding: 25px;
+      }
+      #loading-panel { width: min(440px, 95vw); }
+      #loading-panel h1 { font-size: clamp(25px, 5vw, 40px); letter-spacing: .045em; margin: 0 0 12px; }
+      #loading-panel p { color: #b7cbe0; margin: 0 0 28px; font-size: 14px; }
+      #loading-message { font-size: 13px; color: #cdd9e8; margin-top: 12px; }
+      #loading-progress { display: block; width: 100%; height: 10px; accent-color: #18d1e3; }
     </style>
-    <script type="module" crossorigin src="/wellman/assets/index-DpkGG9XO.js"></script>
+    <script type="module" crossorigin src="/wellman/assets/index-8yesVttZ.js"></script>
   </head>
   <body>
+    <div id="loading-screen" role="status" aria-live="polite">
+      <div id="loading-panel">
+        <h1>UNDERCOVER WHEELMAN</h1>
+        <p>Carregando cidade, veículos e personagens em 3D</p>
+        <progress id="loading-progress" max="100" value="0"></progress>
+        <div id="loading-message">Preparando o jogo...</div>
+      </div>
+    </div>
   </body>
 </html>
