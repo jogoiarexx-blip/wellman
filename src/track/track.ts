@@ -17,6 +17,9 @@ export function addStaticBox(
   mesh.position.set(x, y, z);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
+  if (color === 0xff4444 || color === 0xff6666) mesh.userData.wellmanAsset = 'barrier';
+  if (color === 0xffaa00) mesh.userData.wellmanAsset = 'cone';
+  if (color === 0x666666) mesh.userData.wellmanAsset = 'dumpster';
   scene.add(mesh);
 }
 

@@ -11,6 +11,7 @@ import { createTrafficAgent, updateTraffic, TRACK_WAYPOINTS, type TrafficAgent }
 import { createPoliceAgent, updatePolice, type PoliceAgent } from './ai/police';
 import { Minimap } from './ui/minimap';
 import { EngineAudio } from './systems/audio';
+import { installRealAssets } from './visuals/realAssets';
 
 await RAPIER.init();
 
@@ -59,6 +60,7 @@ const cars: ActiveCar[] = [
   createCar(world, scene, PRESETS[3], new THREE.Vector3(10, 2, -15)),
   createCar(world, scene, PRESETS[0], new THREE.Vector3(-12, 2, 20)),
   createCar(world, scene, PRESETS[1], new THREE.Vector3(15, 2, 30)),
+  createCar(world, scene, PRESETS[3], new THREE.Vector3(18, 2, -20)),
 ];
 
 let activeIndex = 0;
@@ -270,6 +272,20 @@ function animate() {
   const current = getCurrentMission();
   const done = MISSIONS.filter(m => m.completed).length;
   missionHud.innerHTML = `<b>Missões (${done}/${MISSIONS.length})</b><br>` + (current ? `<br><b>${current.title}</b><br>${current.description}` : '<br>Todas concluídas!');
+}
+// Load local, legally reusable GLBs before the first playable frame.
+const loading = document.getElementById('loading-screen');
+const loadingBar = document.getElementById('loading-progress') as HTMLProgressElement | null;
+const loadingMessage = document.getElementById('loading-message');
+try {
+  await installRealAssets(scene, cars, player, (percent, message) => {
+    if (loadingBar) loadingBar.value = percent;
+    if (loadingMessage) loadingMessage.textContent = message + ' · ' + percent + '%';
+  });
+} catch (error) {
+  console.error('Erro ao preparar os assets; modelos de reserva mantidos.', error);
+} finally {
+  loading?.remove();
 }
 animate();
 

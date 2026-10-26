@@ -8,6 +8,7 @@ export interface ActiveCar {
   vehicle: RAPIER.DynamicRayCastVehicleController;
   mesh: THREE.Group;
   wheels: THREE.Mesh[];
+  visualWheels?: Array<{ node: THREE.Object3D; index: number }>;
 }
 
 export function createCar(
@@ -125,6 +126,15 @@ export function syncCar(car: ActiveCar) {
   const r = car.body.rotation();
   car.mesh.position.set(t.x, t.y, t.z);
   car.mesh.quaternion.set(r.x, r.y, r.z, r.w);
+
+  if (car.visualWheels?.length) {
+    for (const { node, index } of car.visualWheels) {
+      const spin = car.vehicle.wheelRotation(index) ?? 0;
+      const steer = index < 2 ? car.vehicle.wheelSteering(index) ?? 0 : 0;
+      node.rotation.set(-spin, steer, 0, 'YXZ');
+    }
+    return;
+  }
 
   for (let i = 0; i < 4; i++) {
     const conn = car.vehicle.wheelChassisConnectionPointCs(i);
